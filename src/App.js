@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Html5Qrcode, Html5QrcodeScanType } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 
 export default function TableAccessScanOrEnter() {
   const [tableCode, setTableCode] = useState("");
@@ -42,8 +42,7 @@ export default function TableAccessScanOrEnter() {
       {
         fps: 10,
         qrbox: qrboxFunction, // Responsive scanning area
-        aspectRatio: 1.0,
-        disableFlip: false
+        aspectRatio: 1.0
       },
       (decodedText) => {
         // Successfully scanned
@@ -133,12 +132,13 @@ export default function TableAccessScanOrEnter() {
         }
         body { overscroll-behavior-y: none; }
         
-        /* QR Scanner styling */
+        /* QR Scanner styling - ensure video is visible */
         #qr-reader {
           width: 100% !important;
           height: 100% !important;
           min-height: 400px !important;
           position: relative !important;
+          background: #000 !important;
         }
         #qr-reader__dashboard {
           display: none !important;
@@ -146,19 +146,24 @@ export default function TableAccessScanOrEnter() {
         #qr-reader__camera_selection {
           display: none !important;
         }
+        #qr-reader__camera {
+          width: 100% !important;
+          height: 100% !important;
+          position: relative !important;
+          display: block !important;
+        }
+        #qr-reader__camera video,
         #qr-reader video {
           width: 100% !important;
           height: 100% !important;
+          max-width: 100% !important;
+          max-height: 100% !important;
           object-fit: cover !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
+          display: block !important;
+          position: relative !important;
+          background: #000 !important;
         }
         #qr-reader__scan_region {
-          width: 100% !important;
-          height: 100% !important;
-        }
-        #qr-reader__camera {
           width: 100% !important;
           height: 100% !important;
         }
@@ -204,7 +209,7 @@ export default function TableAccessScanOrEnter() {
               {/* QR Scanner Container */}
               <div 
                 id={qrCodeRegionId}
-                className="w-full h-full relative"
+                className="w-full h-full relative z-0"
                 style={{ 
                   minHeight: '400px',
                   backgroundColor: '#000',
@@ -222,8 +227,8 @@ export default function TableAccessScanOrEnter() {
                 </div>
               )}
               
-              {/* Overlay with scan frame */}
-              <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-6">
+              {/* Overlay with scan frame - positioned above video */}
+              <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-6 z-20">
                 {/* Scan frame corners */}
                 <div className="relative w-64 h-64">
                   <div className="absolute top-0 left-0 w-8 h-8 border-l-4 border-t-4 border-[#0da6f2] rounded-tl-2xl shadow-[0_0_20px_rgba(13,166,242,0.6)]" />

@@ -10,10 +10,14 @@ module.exports = {
         "primary": "#13a4ec",
         "background-light": "#f6f7f8",
         "background-dark": "#101c22",
+        "background-dark-deep": "#050505",
         "surface-dark": "#18262e",
+        "surface-elevated": "#2c2c2c",
+        "surface-highlight": "#233c48",
       },
       fontFamily: {
-        "display": ["Plus Jakarta Sans", "sans-serif"],
+        "display": ["Inter", "Epilogue", "Plus Jakarta Sans", "sans-serif"],
+        "body": ["Noto Sans", "sans-serif"],
       },
       borderRadius: {
         "DEFAULT": "1rem",

@@ -3,6 +3,8 @@ import React, { useMemo, useState } from "react";
 export default function TableAccessScanOrEnter() {
   const [tableCode, setTableCode] = useState("");
   const [currentScreen, setCurrentScreen] = useState("entry"); // "entry" or "menu"
+  const [guests, setGuests] = useState(2);
+  const [language, setLanguage] = useState("EN");
 
   const normalized = useMemo(() => tableCode.trim().toUpperCase(), [tableCode]);
   const canContinue = useMemo(() => {
@@ -15,95 +17,175 @@ export default function TableAccessScanOrEnter() {
     setCurrentScreen("menu");
   };
 
-  // Second Screen - Menu/Service Screen
+  // Second Screen - Connection Status Screen
   const MenuScreen = () => (
-    <div className="min-h-[100dvh] bg-[#101c22] text-white overflow-y-auto selection:bg-[#0da6f2]/30">
-      {/* Background Orbs */}
-      <div
-        className="gradient-orb w-96 h-96 top-[-20%] left-[-20%] fixed"
-        style={{ backgroundColor: "rgba(13,166,242,1)", animation: "pulseSlow 4s ease-in-out infinite" }}
-      />
-      <div
-        className="gradient-orb w-80 h-80 bottom-[-10%] right-[-20%] fixed"
-        style={{ backgroundColor: "rgba(37,99,235,1)", opacity: 0.2 }}
-      />
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#0a1519] to-[#081014] text-white flex flex-col">
+      {/* Language Selector - Top Right */}
+      <div className="absolute top-6 right-4 z-30">
+        <div className="flex bg-white/10 backdrop-blur-md rounded-full p-1 border border-white/20">
+          <button
+            onClick={() => setLanguage("EN")}
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+              language === "EN"
+                ? "bg-[#0da6f2] text-white"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLanguage("ES")}
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+              language === "ES"
+                ? "bg-[#0da6f2] text-white"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            ES
+          </button>
+        </div>
+      </div>
 
-      {/* Header with Back Button */}
-      <header className="relative z-20 flex items-center justify-between px-4 pt-8 pb-4">
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-8 relative z-10">
+        {/* Restaurant Logo and Branding */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative mb-4">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-amber-900">
+                <path
+                  d="M12 2L2 7L12 12L22 7L12 2Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 17L12 22L22 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 12L12 17L22 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#0a1519]"></div>
+          </div>
+          <h1 className="text-3xl font-extrabold mb-1">The Velvet Fork</h1>
+          <p className="text-white/60 text-sm font-medium">PREMIUM DINING</p>
+        </div>
+
+        {/* Connection Status Card */}
+        <div className="w-full max-w-md bg-[#1a262d]/80 backdrop-blur-md rounded-3xl border border-white/10 p-6 mb-8 shadow-2xl">
+          {/* VERIFIED Status */}
+          <div className="flex items-center gap-2 mb-4">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[#0da6f2]">
+              <path
+                d="M12 2L2 7L12 12L22 7L12 2Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M2 17L12 22L22 17"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M2 12L12 17L22 12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="text-[#0da6f2] font-bold text-sm">VERIFIED</span>
+          </div>
+
+          {/* Connection Message */}
+          <h2 className="text-2xl font-extrabold mb-2">You're connected</h2>
+          <p className="text-white/60 text-sm mb-6">Your table is ready for service.</p>
+
+          {/* Divider */}
+          <div className="h-px bg-white/10 mb-6"></div>
+
+          {/* Table and Guest Info */}
+          <div className="flex items-center justify-between">
+            {/* Table Location */}
+            <div className="flex flex-col">
+              <span className="text-xs text-white/60 mb-1">LOCATION</span>
+              <div className="flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">
+                  <path
+                    d="M4 6H20M4 6C2.89543 6 2 6.89543 2 8V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V8C22 6.89543 21.1046 6 20 6M4 6V4C4 2.89543 4.89543 2 6 2H8C9.10457 2 10 2.89543 10 4V6M20 6V4C20 2.89543 19.1046 2 18 2H16C14.8954 2 14 2.89543 14 4V6M10 12H14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="text-xl font-extrabold">Table {normalized}</span>
+              </div>
+            </div>
+
+            {/* Guest Counter */}
+            <div className="flex flex-col items-end">
+              <span className="text-xs text-white/60 mb-1">GUESTS</span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setGuests(Math.max(1, guests - 1))}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${
+                    guests > 1
+                      ? "bg-white/20 hover:bg-white/30 text-white"
+                      : "bg-white/5 text-white/30 cursor-not-allowed"
+                  }`}
+                >
+                  −
+                </button>
+                <span className="text-xl font-extrabold w-8 text-center">{guests}</span>
+                <button
+                  onClick={() => setGuests(guests + 1)}
+                  className="w-8 h-8 rounded-full bg-[#0da6f2] hover:bg-[#0da6f2]/90 text-white flex items-center justify-center font-bold transition-all"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Start Order Button */}
         <button
-          onClick={() => setCurrentScreen("entry")}
-          className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+          className="w-full max-w-md bg-[#0da6f2] hover:bg-[#0da6f2]/90 text-white font-extrabold text-lg rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg shadow-[#0da6f2]/25 transition-all active:scale-[0.98] mb-4"
         >
+          <span>Start Order</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
-              d="M19 12H5M12 19l-7-7 7-7"
+              d="M10 17l5-5-5-5"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
           </svg>
-          <span className="text-sm font-semibold">Back</span>
         </button>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-full bg-cover bg-center ring-2 ring-white/10 shadow-lg"
-            style={{
-              backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDJbQUWOLEJWSrwd8wOaMqniv1Kmm5i8SKzI-L4rH3OFAPEEzgEJh1Fx8o-8ywA-I5DPX1GrIk4LBFrhwSJOnCRXGQy30P7md-gEKwDyuNx4IJxPJCuKwqarZXzm9YnnDWGHWR6tZQwGB4SqhYow8_fy53FIFjWvM0qv5dK2HwPNUP1BjNnBrVhVtcfJVFYjNYhDfMPR2PRNKt2z5huI5M_2N7Gpkzmxu32b2qFi5VdlvuylsS7iXDGYJzsSs0LHGyA2JaGfZ7dXY9t')",
-            }}
-          />
-          <div className="flex flex-col">
-            <span className="text-base font-extrabold leading-tight tracking-tight">
-              The Velvet Fork
-            </span>
-            <span className="text-[10px] font-extrabold text-[#0da6f2] uppercase tracking-widest leading-none mt-0.5">
-              Table {normalized}
-            </span>
-          </div>
-        </div>
-        <div className="w-20"></div> {/* Spacer for center alignment */}
-      </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 flex-1 w-full max-w-4xl mx-auto px-4 pb-8">
-        <div className="bg-[#1a262d]/60 backdrop-blur-md rounded-2xl border border-white/10 p-6 mb-6">
-          <h1 className="text-2xl font-extrabold mb-2">Welcome to Table {normalized}</h1>
-          <p className="text-white/60 text-sm">Browse our menu and place your order</p>
-        </div>
-
-        {/* Menu Categories */}
-        <div className="space-y-6">
-          <div className="bg-[#1a262d]/60 backdrop-blur-md rounded-2xl border border-white/10 p-6">
-            <h2 className="text-xl font-bold mb-4 text-[#0da6f2]">Menu Categories</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {["Appetizers", "Main Course", "Desserts", "Beverages"].map((category) => (
-                <button
-                  key={category}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 text-left transition-all active:scale-95"
-                >
-                  <div className="font-semibold mb-1">{category}</div>
-                  <div className="text-xs text-white/40">View items</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-[#1a262d]/60 backdrop-blur-md rounded-2xl border border-white/10 p-6">
-            <h2 className="text-xl font-bold mb-4 text-[#0da6f2]">Quick Actions</h2>
-            <div className="space-y-3">
-              {["Call Waiter", "Request Bill", "Special Requests"].map((action) => (
-                <button
-                  key={action}
-                  className="w-full bg-[#0da6f2]/20 hover:bg-[#0da6f2]/30 border border-[#0da6f2]/30 rounded-xl p-4 text-left transition-all active:scale-[0.98]"
-                >
-                  <div className="font-semibold">{action}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* Not your table link */}
+        <button
+          onClick={() => setCurrentScreen("entry")}
+          className="text-white/60 hover:text-white text-sm transition-colors"
+        >
+          Not your table? <span className="underline">Scan again</span>
+        </button>
       </main>
     </div>
   );

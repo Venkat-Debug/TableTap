@@ -117,7 +117,7 @@ export default function ServiceScreen({
         navigator.vibrate(10);
       }
     },
-    [requests, showToast, setRequests, requestIds, lastRequestTime]
+    [requests, showToast, requestIds, lastRequestTime]
   );
 
   const handleTileClick = useCallback(

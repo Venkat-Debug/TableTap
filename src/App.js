@@ -84,10 +84,6 @@ export default function TableAccessScanOrEnter() {
     setCurrentScreen("tracker");
   };
 
-  const handleBackToService = () => {
-    setCurrentScreen("service");
-  };
-
   const handleNewRequest = () => {
     setCurrentScreen("service");
   };

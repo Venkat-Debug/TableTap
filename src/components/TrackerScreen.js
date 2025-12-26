@@ -73,12 +73,6 @@ export default function TrackerScreen({ normalized, requests, onNewRequest, onDe
     return status;
   };
 
-  const handleDelete = (requestId) => {
-    if (onDeleteRequest) {
-      onDeleteRequest(requestId);
-    }
-  };
-
   const handleReplay = (request) => {
     // Navigate to service screen to recreate this request
     if (onNewRequest) {

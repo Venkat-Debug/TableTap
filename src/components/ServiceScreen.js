@@ -117,7 +117,7 @@ export default function ServiceScreen({
         navigator.vibrate(10);
       }
     },
-    [requests, showToast, requestIds, lastRequestTime]
+    [requests, showToast, setRequests, requestIds, lastRequestTime]
   );
 
   const handleTileClick = useCallback(
@@ -174,7 +174,7 @@ export default function ServiceScreen({
         r.id === requestId ? { ...r, failed: false, status: "Sent" } : r
       )
     );
-  }, []);
+  }, [setRequests]);
 
   // Get visible requests (max 2 visible)
   const visibleRequests = requests.slice(0, 2);

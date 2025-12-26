@@ -1,10 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeScanType } from "html5-qrcode";
 
 export default function TableAccessScanOrEnter() {
   const [tableCode, setTableCode] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState("");
+  const [isCameraReady, setIsCameraReady] = useState(false);
   const scannerRef = useRef(null);
   const qrCodeRegionId = "qr-reader";
 
@@ -21,16 +22,28 @@ export default function TableAccessScanOrEnter() {
       return;
     }
 
+    // Calculate responsive QR box size (smaller for mobile)
+    const qrboxFunction = (viewfinderWidth, viewfinderHeight) => {
+      const minEdgePercentage = 0.7; // 70% of the smaller edge
+      const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+      const qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+      return {
+        width: qrboxSize,
+        height: qrboxSize
+      };
+    };
+
     const html5QrCode = new Html5Qrcode(qrCodeRegionId);
     scannerRef.current = html5QrCode;
 
-    // Start scanning
+    // Start scanning with better mobile configuration
     html5QrCode.start(
       { facingMode: "environment" }, // Use back camera on mobile
       {
         fps: 10,
-        qrbox: { width: 250, height: 250 }, // Scanning area size
+        qrbox: qrboxFunction, // Responsive scanning area
         aspectRatio: 1.0,
+        disableFlip: false
       },
       (decodedText) => {
         // Successfully scanned
@@ -41,15 +54,43 @@ export default function TableAccessScanOrEnter() {
       },
       (errorMessage) => {
         // Scanning errors are handled silently (expected during scanning)
+        // Only log to console for debugging
+        console.log("Scanning in progress...", errorMessage);
       }
-    ).catch((err) => {
-      setScanError("Camera access denied or not available");
+    ).then(() => {
+      // Camera started successfully
+      setIsCameraReady(true);
+    }).catch((err) => {
+      console.error("QR Scanner error details:", err);
+      let errorMsg = "Camera access denied or not available";
+      
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        errorMsg = "Camera permission denied. Please allow camera access in your browser settings.";
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        errorMsg = "No camera found on this device.";
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+        errorMsg = "Camera is already in use by another app.";
+      } else if (err.name === "OverconstrainedError" || err.name === "ConstraintNotSatisfiedError") {
+        errorMsg = "Camera constraints not satisfied. Trying again...";
+        // Retry with simpler constraints
+        setTimeout(() => {
+          if (!scannerRef.current) {
+            setIsScanning(true);
+          }
+        }, 1000);
+        return;
+      } else {
+        errorMsg = `Camera error: ${err.message || err.name || "Unknown error"}`;
+      }
+      
+      setScanError(errorMsg);
       setIsScanning(false);
+      setIsCameraReady(false);
       scannerRef.current = null;
-      console.error("QR Scanner error:", err);
     });
 
     return () => {
+      setIsCameraReady(false);
       if (scannerRef.current) {
         scannerRef.current.stop().then(() => {
           scannerRef.current.clear();
@@ -97,6 +138,7 @@ export default function TableAccessScanOrEnter() {
           width: 100% !important;
           height: 100% !important;
           min-height: 400px !important;
+          position: relative !important;
         }
         #qr-reader__dashboard {
           display: none !important;
@@ -108,8 +150,15 @@ export default function TableAccessScanOrEnter() {
           width: 100% !important;
           height: 100% !important;
           object-fit: cover !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
         }
         #qr-reader__scan_region {
+          width: 100% !important;
+          height: 100% !important;
+        }
+        #qr-reader__camera {
           width: 100% !important;
           height: 100% !important;
         }
@@ -158,9 +207,20 @@ export default function TableAccessScanOrEnter() {
                 className="w-full h-full relative"
                 style={{ 
                   minHeight: '400px',
-                  backgroundColor: '#000'
+                  backgroundColor: '#000',
+                  position: 'relative'
                 }}
               />
+              
+              {/* Loading indicator */}
+              {!isCameraReady && !scanError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0da6f2] mx-auto mb-4"></div>
+                    <p className="text-white text-sm font-semibold">Starting camera...</p>
+                  </div>
+                </div>
+              )}
               
               {/* Overlay with scan frame */}
               <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-6">
